@@ -1,0 +1,1 @@
+web: java -jar target/web-project-0.0.1-SNAPSHOT.war --server.port=$PORT
