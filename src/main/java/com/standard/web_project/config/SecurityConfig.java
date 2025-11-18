@@ -2,13 +2,12 @@ package com.standard.web_project.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-
-import jakarta.servlet.DispatcherType;
 
 @Configuration
 @EnableWebSecurity
@@ -26,9 +25,9 @@ public class SecurityConfig {
             .csrf((csrf) -> csrf.disable()) 
             
             .authorizeHttpRequests(auth  -> auth 
-                .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll() // FORWARD 타입의 요청은 모두 허용    
+                .requestMatchers(HttpMethod.POST, "/joinAction").permitAll() // POST 방식의 /joinAction 요청은 누구나 허용
                 // 로그인 없이 접근 가능한 페이지 목록
-                .requestMatchers("/", "/css/**", "/js/**", "/joinForm", "/loginForm", "/loginAction").permitAll()
+                .requestMatchers("/", "/css/**", "/js/**", "/joinForm", "/loginForm", "/loginAction", "/checkId").permitAll()
                 // 그 외 모든 페이지는 로그인을 해야만 접근 가능
                 .anyRequest().authenticated()
             )

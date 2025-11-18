@@ -51,4 +51,10 @@ public class MemberServiceImpl implements MemberService {
         // 3. 암호화된 정보가 담긴 VO를 DB로 전달
         memberMapper.insertMember(memberVO);
     }
+
+    @Override
+    public boolean isUserIdDuplicated(String userId) {
+        // 아이디 중복 확인을 위한 로직
+        return memberMapper.countByUserId(userId) > 0;
+    }
 }

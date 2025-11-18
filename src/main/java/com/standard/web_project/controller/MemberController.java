@@ -1,22 +1,32 @@
 package com.standard.web_project.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.standard.web_project.service.MemberService;
+import com.standard.web_project.service.UserDetailsServiceImpl;
 import com.standard.web_project.vo.MemberVO;
 
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession; // UserDetailsService 구현체
 
 @Controller
 public class MemberController {
 
-    // 1. @Autowired를 사용하여 Service를 정확하게 주입받습니다.
-    @Autowired
-    private MemberService memberService;
+    // 1. @Autowired를 사용하여 Service, UserDetailsService 주입
+    @Autowired private MemberService memberService;
+    @Autowired private UserDetailsServiceImpl userDetailsService;
 
     // --- 회원가입 관련 ---
     @GetMapping("/joinForm")
@@ -25,9 +35,36 @@ public class MemberController {
     }
 
     @PostMapping("/joinAction")
-    public String processJoin(MemberVO memberVO) {
-        memberService.registerMember(memberVO);
-        return "redirect:/loginForm"; // 가입 성공 후 로그인 폼으로 리다이렉트
+    @ResponseBody
+    public Map<String, Object> processJoin(MemberVO memberVO) {
+        // --- 디버깅 코드 ---
+        System.out.println("Controller가 받은 데이터: " + memberVO.toString());
+
+        Map<String, Object> response = new HashMap<>();
+
+         try {
+            // 1. 회원가입 처리
+            memberService.registerMember(memberVO);
+
+            // 2. 회원가입 후 자동 로그인 처리 (두 번째 메소드의 로직을 가져옴)
+            UserDetails userDetails = userDetailsService.loadUserByUsername(memberVO.getUserId());
+            Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            // 3. 성공 응답 구성
+            response.put("result", "success");
+            response.put("message", memberVO.getUserName() + "님, 회원가입을 축하합니다! 자동으로 로그인되었습니다.");
+            response.put("redirectUrl", "/myPage"); // JS가 이동할 경로
+            
+        } catch (Exception e) {
+            // 4. 실패 응답 구성
+            response.put("result", "fail");
+            response.put("message", "회원가입 중 오류가 발생했습니다. (예: 아이디 중복)");
+            e.printStackTrace();
+        }
+        
+        // 5. 최종 응답(JSON) 리턴
+        return response;
     }
 
     // --- 로그인 & 로그아웃 관련 ---
@@ -64,5 +101,14 @@ public class MemberController {
         MemberVO updatedMember = memberService.getMemberById(memberVO.getUserId());
         session.setAttribute("loginMember", updatedMember);
         return "redirect:/myPage";
+    }
+
+    // 아이디 중복 확인을 위한 로직
+    @GetMapping("/checkId")
+    @ResponseBody // 데이터를 직접 응답
+    public Map<String, Boolean> checkIdDuplication(@RequestParam("userId") String userId) {
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("isDuplicated", memberService.isUserIdDuplicated(userId));
+        return response;
     }
 }

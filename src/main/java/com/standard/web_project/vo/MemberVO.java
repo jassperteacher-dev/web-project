@@ -5,4 +5,8 @@ public class MemberVO {
     private String userId;
     private String userPw;
     private String userName;
+    private String phone;
+    private String postNum;
+    private String address;
+    private String detAddr; // 상세주소
 }

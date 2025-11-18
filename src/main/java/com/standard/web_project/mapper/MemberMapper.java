@@ -10,7 +10,8 @@ import com.standard.web_project.vo.MemberVO;
 @Mapper
 public interface MemberMapper {
 
-    @Insert("INSERT INTO member (user_id, user_pw, user_name) VALUES (#{userId}, #{userPw}, #{userName})")
+    @Insert("INSERT INTO member (user_id, user_pw, user_name, phone, post_num, address, det_addr) " +
+            "VALUES (#{userId}, #{userPw}, #{userName}, #{phone}, #{postNum}, #{address}, #{detAddr})")
     void insertMember(MemberVO memberVO);
 
     // 아이디로 회원 정보 조회 (로그인, 정보 수정 시 사용)
@@ -28,4 +29,8 @@ public interface MemberMapper {
         "</script>"
     })
     void updateMember(MemberVO memberVO);
+
+    // 아이디 중복 확인을 위한 로직
+    @Select("SELECT COUNT(*) FROM member WHERE user_id = #{userId}")
+    int countByUserId(String userId);
 }
