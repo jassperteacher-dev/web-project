@@ -1,5 +1,5 @@
 # 1. Java 17 환경을 기반으로 시작합니다.
-FROM openjdk:17
+FROM eclipse-temurin:17-jdk-jammy
 
 # 2. 작업 디렉토리를 만듭니다.
 WORKDIR /app
