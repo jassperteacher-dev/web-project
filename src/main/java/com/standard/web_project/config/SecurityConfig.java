@@ -1,13 +1,14 @@
 package com.standard.web_project.config;
 
+import jakarta.servlet.DispatcherType;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.http.HttpMethod;
 
 @Configuration
 @EnableWebSecurity
@@ -24,11 +25,14 @@ public class SecurityConfig {
             // CSRF 보호 기능 비활성화
             .csrf((csrf) -> csrf.disable()) 
             
-            .authorizeHttpRequests(auth  -> auth 
-                .requestMatchers(HttpMethod.POST, "/joinAction").permitAll() // POST 방식의 /joinAction 요청은 누구나 허용
-                // 로그인 없이 접근 가능한 페이지 목록
-                .requestMatchers("/", "/css/**", "/js/**", "/joinForm", "/loginForm", "/loginAction", "/checkId").permitAll()
-                // 그 외 모든 페이지는 로그인을 해야만 접근 가능
+            .authorizeHttpRequests(auth -> auth
+                // FORWARD 타입의 요청은 모두 허용 (JSP 연동 시 중요)
+                .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
+                
+                // 로그인 없이 누구나 접근 가능한 URL 목록
+                .requestMatchers("/", "/css/**", "/js/**", "/joinForm", "/joinAction", "/loginForm", "/checkId").permitAll() 
+                
+                // 그 외의 모든 요청은 반드시 인증(로그인)이 필요함
                 .anyRequest().authenticated()
             )
              
