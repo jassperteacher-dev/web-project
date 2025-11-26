@@ -4,6 +4,7 @@ import lombok.Data;
 public class MemberVO {
     private String userId;
     private String userPw;
+    private String email;
     private String userName;
     private String phone;
     private String postNum;

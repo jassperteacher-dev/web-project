@@ -10,8 +10,8 @@ import com.standard.web_project.vo.MemberVO;
 @Mapper
 public interface MemberMapper {
 
-    @Insert("INSERT INTO member (user_id, user_pw, user_name, phone, post_num, address, det_addr) " +
-            "VALUES (#{userId}, #{userPw}, #{userName}, #{phone}, #{postNum}, #{address}, #{detAddr})")
+    @Insert("INSERT INTO member (user_id, user_pw, user_name, email, phone, post_num, address, det_addr) " +
+            "VALUES (#{userId}, #{userPw}, #{userName}, #{email}, #{phone}, #{postNum}, #{address}, #{detAddr})")
     void insertMember(MemberVO memberVO);
 
     // 아이디로 회원 정보 조회 (로그인, 정보 수정 시 사용)

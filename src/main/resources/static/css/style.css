@@ -49,7 +49,25 @@ body {
     font-size: 16px;
 }
 
+.form-group select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 16px;
+    background-color: white; /* select 태그의 기본 배경색을 지정 */
+}
+
+/* input에 포커스 갔을 때 스타일 */
 .form-group input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.25);
+}
+
+/* select에 포커스 갔을 때 스타일 */
+.form-group select:focus {
     outline: none;
     border-color: #007bff;
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.25);
