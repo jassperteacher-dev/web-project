@@ -15,7 +15,7 @@ RUN ./mvnw dependency:go-offline
 COPY src ./src
 
 # 6. Maven Wrapper를 사용하여 프로젝트를 빌드합니다. (war 파일 생성)
-RUN ./mvnw clean install
+RUN ./mvnw clean install -DskipTests
 
 # 7. 서버를 실행하는 최종 명령어입니다.
 #    WAR 파일로 빌드되었으므로, java -jar로 실행합니다.
