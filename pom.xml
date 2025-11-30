@@ -45,9 +45,10 @@
 			<version>3.0.5</version>
 		</dependency>
 
+		<!-- PostgreSQL 드라이버 추가 -->
 		<dependency>
-			<groupId>org.mariadb.jdbc</groupId>
-			<artifactId>mariadb-java-client</artifactId>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
