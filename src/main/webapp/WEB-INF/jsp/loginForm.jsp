@@ -10,8 +10,9 @@
         <h1 class="form-title">로그인</h1>
         
         
-        <% if (request.getAttribute("error") != null) { %>
-            <p class="error-message">${error}</p>
+        <%-- URL 파라미터에 'error'가 있으면 에러 메시지 표시 --%>
+        <% if (request.getParameter("error") != null) { %>
+            <p class="error-message">아이디 또는 비밀번호가 일치하지 않습니다.</p>
         <% } %>
 
         <form action="/loginAction" method="post">
