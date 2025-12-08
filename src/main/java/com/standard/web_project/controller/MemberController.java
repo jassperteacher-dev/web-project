@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import com.standard.web_project.service.MemberService;
 import com.standard.web_project.service.UserDetailsServiceImpl;
@@ -79,18 +81,26 @@ public class MemberController {
         return "redirect:/loginForm";
     }
 
-    // --- 마이페이지 관련 (단 하나의 메소드만 남깁니다) ---
+    // --- 마이페이지 관련 ---
     @GetMapping("/myPage")
-    public String showMyPage(HttpSession session, Model model) {
-        MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
+    public String showMyPage(Model model, @AuthenticationPrincipal UserDetails userDetails) {
         
-        if (loginMember == null) {
-            // 비로그인 상태라면 로그인 폼으로 보냅니다.
+        // 1. Spring Security가 넣어준 출입증(userDetails)을 확인합니다.
+        if (userDetails == null) {
+            // 출입증이 없다면 로그인 페이지로
             return "redirect:/loginForm";
         }
         
-        // 로그인 상태라면, 모델에 회원 정보를 담아 myPage.jsp로 보냅니다.
+        // 2. 출입증에서 아이디를 꺼냅니다.
+        String userId = userDetails.getUsername();
+        System.out.println("로그인한 사용자 ID: " + userId);
+
+        // 3. 아이디로 DB에서 전체 회원 정보를 조회합니다.
+        MemberVO loginMember = memberService.getMemberById(userId);
+        
+        // 4. 조회한 정보를 모델에 담아 화면으로 보냅니다.
         model.addAttribute("member", loginMember);
+        
         return "myPage";
     }
 
